@@ -1,0 +1,11 @@
+.menuText {
+    flex-grow: 1;
+    padding-left: 20px;
+}
+
+.menuButton {
+    padding-left: -12px;
+    padding-right: 20px;
+}
+
+.appBar {}

@@ -1,0 +1,50 @@
+name: Test Suite
+scenarios:
+  - name: Test Scenario 1
+    steps:
+      - name: Test Step 1
+        className: com.github.radtin.metallid.action.DeveloperDebugAction
+        methodName: output
+        value: debug
+        output: response
+      - name: Test Step 2
+        className: com.github.radtin.metallid.action.DeveloperDebugAction
+        methodName: output
+        value: ${response}
+        output: response2
+      - name: Test Step 3
+        className: com.github.radtin.metallid.action.DeveloperDebugAction
+        methodName: output
+        value: ${response2}
+  - name: Test Scenario 2
+    steps:
+      - name: Test Step 1
+        className: com.github.radtin.metallid.action.DeveloperDebugAction
+        methodName: output
+        value: debug
+        output: response
+      - name: Test Step 2
+        className: com.github.radtin.metallid.action.DeveloperDebugAction
+        methodName: output
+        value: ${response}
+        output: response2
+      - name: Test Step 3
+        className: com.github.radtin.metallid.action.DeveloperDebugAction
+        methodName: output
+        value: ${response2}
+  - name: Test Scenario 3
+    steps:
+      - name: Test Step 1
+        className: com.github.radtin.metallid.action.DeveloperDebugAction
+        methodName: output
+        value: debug
+        output: response
+      - name: Test Step 2
+        className: com.github.radtin.metallid.action.DeveloperDebugAction
+        methodName: output
+        value: ${response}
+        output: response2
+      - name: Test Step 3
+        className: com.github.radtin.metallid.action.DeveloperDebugAction
+        methodName: output
+        value: ${response2}
