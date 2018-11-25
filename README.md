@@ -1,7 +1,7 @@
 
 # Metal Lid
 
-Metal Lid is a testing framework written in Kotlin to make the process of creating, maintaining, and scaling regression and integration testing easy.
+Metal Lid is a testing framework written in Kotlin for creating maintainable and scalable test scenarios.
 
 ## Getting Started
 
