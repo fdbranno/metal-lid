@@ -1,0 +1,20 @@
+.testStepCard {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 8px;
+    padding: 20px;
+}
+
+.textField {
+    margin: 16px;
+    width: 256px;
+}
+
+.buttonCard {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 8px;
+    padding: 20px;
+}

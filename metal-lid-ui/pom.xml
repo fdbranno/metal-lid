@@ -4,27 +4,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.radtin</groupId>
-    <artifactId>metal-lid</artifactId>
+    <artifactId>metal-lid-ui</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>metal-lid</name>
+    <name>metal-lid-ui</name>
     <description>TODO</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
         <kotlin.version>1.3.10</kotlin.version>
     </properties>
-
-    <modules>
-        <module>metal-lid-domain</module>
-        <module>metal-lid-core</module>
-        <module>metal-lid-service</module>
-        <module>metal-lid-ui</module>
-        <module>metal-lid-example</module>
-    </modules>
 
     <dependencies>
     </dependencies>
@@ -32,12 +23,32 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <executions>
+                    <execution>
+                        <id>run-npm-install</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>npm</executable>
+                            <arguments>
+                                <argument>install</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
                     <filesets>
                         <fileset>
-                            <directory>test-output</directory>
+                            <directory>node_modules</directory>
                             <followSymlinks>false</followSymlinks>
                         </fileset>
                     </filesets>

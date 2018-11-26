@@ -1,0 +1,9 @@
+name: Test Suite Config
+testConfigurations:
+- type: oracleDatabaseConfiguration
+  name: db-config
+  port: 1521
+  serviceName: SN
+  hostname: HN
+  username: UN
+  password: PW

@@ -1,0 +1,14 @@
+name: Test Suite
+testScenarios:
+- name: test1
+  testSteps:
+  - name: step1
+    className: com.github.radtin.metallid.action.System
+    methodName: printlnMessage
+    output: output
+    value: testing
+  - name: step2
+    className: com.github.radtin.metallid.action.System
+    methodName: printlnMessage
+    output: output
+    value: ${output}
