@@ -11,7 +11,7 @@ class DeveloperDebugAction {
 
     fun output(input: Input): Output {
         val value = "${input.value} ${LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli()}"
-        log.info(value)
+        log.info("DeveloperDebugAction | value ({}) | configuration ({})", value, input.configuration)
         return Output(value)
     }
 

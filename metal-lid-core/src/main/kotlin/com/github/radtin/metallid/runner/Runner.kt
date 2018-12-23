@@ -1,13 +1,37 @@
 package com.github.radtin.metallid.runner
 
-import com.github.radtin.metallid.domain.Input
-import com.github.radtin.metallid.domain.Output
-import com.github.radtin.metallid.domain.Step
+import com.github.radtin.metallid.datasource.DataSource
+import com.github.radtin.metallid.domain.*
+import com.github.radtin.metallid.domain.configuration.Configuration
+import com.github.radtin.metallid.domain.configuration.Database
 
 var storedTokens: MutableMap<String, String> = mutableMapOf()
 
-abstract class Runner {
+abstract class Runner(private val dataSource: DataSource) {
     abstract fun run()
+
+    protected fun configuration() {
+        if (dataSource.getData().configurations != null) {
+            for (configuration: Configuration in dataSource.getData().configurations!!) {
+                if (configuration.database == null) {
+                    continue
+                }
+                for (database: Database in configuration.database!!) {
+                    database.className
+                }
+            }
+        }
+    }
+}
+
+fun runTestSteps(scenario: Scenario) {
+    val steps = scenario.steps
+    for (step: Step in steps) {
+        val className = step.className
+        val method = step.methodName
+        val output: Output = invokeMethod(className, method, Input(setValue(step), ""))
+        saveOutput(step, output)
+    }
 }
 
 /**
@@ -29,6 +53,6 @@ fun setValue(step: Step): String {
 /**
  * If an output value is provided, store the value and token in the storedTokens MutableMap.
  */
-fun setOutput(step: Step, output: Output) {
+fun saveOutput(step: Step, output: Output) {
     if (step.output != null) storedTokens["\${${step.output!!}}"] = output.value
 }

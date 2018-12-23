@@ -12,11 +12,14 @@ import org.testng.xml.XmlSuite
 import org.testng.xml.XmlTest
 import java.util.Arrays.asList
 
-class TestNGRunner(private val dataSource: DataSource) : Runner() {
+class TestNGRunner(private val dataSource: DataSource) : Runner(dataSource) {
 
     override fun run() {
         val testNG = TestNG()
         val xmlSuite = createXmlSuite(dataSource.getData())
+
+        configuration()
+
         testNG.setXmlSuites(asList(xmlSuite))
         testNG.run()
     }
@@ -41,17 +44,12 @@ class TestNGRunner(private val dataSource: DataSource) : Runner() {
         @Parameters("scenario")
         fun dynamicTest(testCaseJson: String) {
             val scenario: Scenario = unmarshal(testCaseJson)
-            for (step: Step in scenario.steps) {
-                val value: String = setValue(step) // If token of ${name} is provided, find the value from the storedTokens.
-                val output: Output = invokeMethod(step.className, step.methodName, Input(value, ""))
-                setOutput(step, output)
-            }
+            runTestSteps(scenario)
         }
 
     }
 
 }
-
 
 private fun marshall(scenario: Scenario): String? {
     val mapper = jacksonObjectMapper()
