@@ -1,21 +1,24 @@
 package com.github.radtin.metallid.report
 
-import com.github.radtin.metallid.domain.Output
-import com.github.radtin.metallid.domain.Scenario
-import com.github.radtin.metallid.domain.Step
+import com.github.radtin.metallid.domain.report.ReportScenario
+import com.github.radtin.metallid.domain.report.ReportStep
+import com.github.radtin.metallid.domain.report.ReportSuite
 
-class ConsoleReport(private val properties: Map<String, String>) : Report {
+class ConsoleReport : MetalLidReport(null, null) {
 
     override fun applyProperties() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun outputResults(scenario: Scenario, step: Step, output: Output) {
-        val content = if (output.error == null) {
-            "SUCCESS"
-        } else {
-            output.error?.message.plus(" :\t").plus(output.error?.stackTrace)
+    override fun outputResults(report: ReportSuite) {
+        println(report.name)
+        for (scenario: ReportScenario in report.scenarios) {
+            println("\n    ".plus(scenario.name).plus(":"))
+            for (step: ReportStep in scenario.steps) {
+                println("        ".plus(step.name).plus(":"))
+                println("            status: ".plus(status(step.output)))
+                println("            output: ".plus(results(step.output)))
+            }
         }
-        println(scenario.name.plus(" :\t").plus(step.name).plus(" :\t").plus(content))
     }
 }
