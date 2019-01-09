@@ -21,6 +21,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <kotlin.version>1.3.11</kotlin.version>
+        <poi.version>3.6</poi.version>
     </properties>
 
     <dependencies>
@@ -81,6 +82,24 @@
             <artifactId>otj-pg-embedded</artifactId>
             <version>0.12.6</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Reporting -->
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml-schemas</artifactId>
+            <version>${poi.version}</version>
         </dependency>
     </dependencies>
 
