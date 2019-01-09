@@ -114,15 +114,13 @@ class XlsReport : MetalLidReport(null, null) {
             beginScenarioRow += index
         }
 
-        var rowCount = 0
+        bookData.forEachIndexed { rowNum, aBook ->
+            val row = sheet.createRow(rowNum)
 
-        bookData.forEach { aBook ->
-            val row = sheet.createRow(rowCount++)
-
-            aBook.forEachIndexed { column, field ->
-                val cell = row.createCell(column)
+            aBook.forEachIndexed { columnNum, field ->
+                val cell = row.createCell(columnNum)
                 cell.setCellValue(field)
-                cell.cellStyle = if (rowCount == 1) { headerStyle } else if(rowCount == 2) { columnStyle } else { getStyle(field) }
+                cell.cellStyle = if (rowNum == 0) { headerStyle } else if(rowNum == 1) { columnStyle } else { getStyle(field) }
             }
         }
 
