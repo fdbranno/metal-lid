@@ -1,8 +1,5 @@
 package com.github.radtin.metallid.report
 
-import com.github.radtin.metallid.domain.Output
-import com.github.radtin.metallid.domain.Scenario
-import com.github.radtin.metallid.domain.Step
 import com.github.radtin.metallid.domain.report.ReportScenario
 import com.github.radtin.metallid.domain.report.ReportStep
 import com.github.radtin.metallid.domain.report.ReportSuite

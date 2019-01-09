@@ -19,10 +19,10 @@ class XlsReport : MetalLidReport(null, null) {
 
     private var workbook = XSSFWorkbook()
 
-    private var red: XSSFColor
-    private var green: XSSFColor
-    private var blue: XSSFColor
-    private var white: XSSFColor
+    private var red: XSSFColor = XSSFColor(Color.RED)
+    private var green = XSSFColor(Color.GREEN)
+    private var blue = XSSFColor(Color.BLUE)
+    private var white = XSSFColor(Color.WHITE)
 
     private var boldFont: XSSFFont
     private var whiteFont: XSSFFont
@@ -35,15 +35,9 @@ class XlsReport : MetalLidReport(null, null) {
     private var failureStyle: XSSFCellStyle
 
     init {
-        green = XSSFColor(Color.GREEN)
         green.tint = -0.5
 
-        red = XSSFColor(Color.RED)
         red.tint = -0.5
-
-        blue = XSSFColor(Color.BLUE)
-
-        white = XSSFColor(Color.WHITE)
 
         boldFont = workbook.createFont()
         boldFont.bold = true
@@ -101,34 +95,32 @@ class XlsReport : MetalLidReport(null, null) {
 
     override fun outputResults(report: ReportSuite) {
         val sheet = workbook.createSheet(report.name)
-        var bookData = mutableListOf(mutableListOf(report.name, "", "", ""), mutableListOf("TestScenario", "TestStep", "Status", "Output"))
+        val bookData = mutableListOf(mutableListOf(report.name, "", "", ""), mutableListOf("TestScenario", "TestStep", "Status", "Output"))
 
         var beginScenarioRow = 2
-        var scenarioIndexes = mutableListOf<MutableList<Int>>()
+        val scenarioIndexes = mutableListOf<MutableList<Int>>()
 
         for (scenario: ReportScenario in report.scenarios) {
             var index = 0
             for (step: ReportStep in scenario.steps) {
-                var scenarioCell = if (index == 0) { scenario.name } else { "" }
-                var values = mutableListOf(scenarioCell, step.name, status(step.output), results(step.output))
+                val scenarioCell = if (index == 0) { scenario.name } else { "" }
+                val values = mutableListOf(scenarioCell, step.name, status(step.output), results(step.output))
                 bookData.add(values)
                 index++
             }
 
-            var endScenarioRow = beginScenarioRow + index - 1
+            val endScenarioRow = beginScenarioRow + index - 1
             scenarioIndexes.add(mutableListOf(beginScenarioRow, endScenarioRow))
             beginScenarioRow += index
         }
 
         var rowCount = 0
 
-        for (aBook in bookData) {
+        bookData.forEach { aBook ->
             val row = sheet.createRow(rowCount++)
 
-            var columnCount = 0
-
-            for (field in aBook) {
-                val cell = row.createCell(columnCount++)
+            aBook.forEachIndexed { column, field ->
+                val cell = row.createCell(column)
                 cell.setCellValue(field)
                 cell.cellStyle = if (rowCount == 1) { headerStyle } else if(rowCount == 2) { columnStyle } else { getStyle(field) }
             }
@@ -137,13 +129,13 @@ class XlsReport : MetalLidReport(null, null) {
         sheet.addMergedRegion(CellRangeAddress(0,0,0,3))
 
         for (rowSet: MutableList<Int> in scenarioIndexes) {
-            sheet.addMergedRegion(CellRangeAddress(rowSet.get(0), rowSet.get(1), 0, 0))
+            sheet.addMergedRegion(CellRangeAddress(rowSet[0], rowSet[1], 0, 0))
         }
 
         FileOutputStream("test-output/".plus(report.name.trim().replace(" ", "_")).plus(".xlsx")).use { outputStream -> workbook.write(outputStream) }
     }
 
-    fun getStyle(field: String): XSSFCellStyle {
+    private fun getStyle(field: String): XSSFCellStyle {
         if (field == "SUCCESS") { return successStyle }
         else if (field == "FAILURE") { return failureStyle }
         return standardStyle

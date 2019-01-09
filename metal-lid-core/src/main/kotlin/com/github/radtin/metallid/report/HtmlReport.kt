@@ -1,8 +1,5 @@
 package com.github.radtin.metallid.report
 
-import com.github.radtin.metallid.domain.Output
-import com.github.radtin.metallid.domain.Scenario
-import com.github.radtin.metallid.domain.Step
 import com.github.radtin.metallid.domain.report.ReportScenario
 import com.github.radtin.metallid.domain.report.ReportStep
 import com.github.radtin.metallid.domain.report.ReportSuite
@@ -53,8 +50,6 @@ ${"$"}body
 </body>
 </html>"""
 
-        var title = report.name
-
         var body = """<table class="tg">
   <tr>
     <th>Test Scenario</th>
@@ -80,7 +75,7 @@ ${"$"}content"""
 
         body = body.replace("\$content", content).plus("</table>")
 
-        template = template.replace("\$title", title)
+        template = template.replace("\$title", report.name)
         template = template.replace("\$body", body)
 
         val file = File("test-output/".plus(report.name.trim().replace(" ", "_")).plus(".html"))
