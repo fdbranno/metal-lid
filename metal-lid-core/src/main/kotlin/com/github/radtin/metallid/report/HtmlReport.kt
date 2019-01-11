@@ -9,8 +9,6 @@ import java.io.File
 class HtmlReport(private val reportSuite: ReportSuite,
                  val properties: MutableMap<String, String>? = null) : MetalLidReport(reportSuite, properties) {
 
-    private var propertiesMap = applyProperties()
-
     override fun outputResults() {
         var template = """<!DOCTYPE html>
 <html>
@@ -50,11 +48,16 @@ ${"$"}body
 </body>
 </html>"""
 
+        val detail = when (isDetailed()) {
+            true -> "\n    <th>Class</th> \n    <th>Method</th> \n    <th>Input</th> \n"
+            false -> ""
+        }
+
         var body = """<table class="tg">
   <tr>
     <th>Test Scenario</th>
     <th>Test Step</th>
-    <th>Status</th>
+    <th>Status</th>$detail
     <th>Output</th>
   </tr>
 ${"$"}content"""
@@ -67,6 +70,11 @@ ${"$"}content"""
                 row = row.plus("    <td>${step.name}</td>\n")
                 val classValue = if (status(step.output) == "SUCCESS") { "success" } else { "error" }
                 row = row.plus("    <td class=$classValue>${status(step.output)}</td>\n")
+                val detailRow = when (isDetailed()) {
+                    true -> "    <td>${step.className}</td> \n<td>${step.methodName}</td> \n<td>\"${step.value}\"</td> \n"
+                    false -> ""
+                }
+                row = row.plus(detailRow)
                 row = row.plus("    <td>${results(step.output)}</td>\n")
                 row = row.plus("  </tr>\n")
                 content = content.plus(row)
@@ -78,7 +86,7 @@ ${"$"}content"""
         template = template.replace("\$title", reportSuite.name)
         template = template.replace("\$body", body)
 
-        val file = File("test-output/${propertiesMap["filename"]}.html")
+        val file = File("test-output/${getFilename()}.html")
         file.createNewFile()
         file.writeText(template)
     }

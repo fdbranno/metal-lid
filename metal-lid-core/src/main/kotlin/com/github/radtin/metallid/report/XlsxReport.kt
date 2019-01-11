@@ -20,8 +20,6 @@ import java.awt.Color
 class XlsxReport(private val reportSuite: ReportSuite,
                  val properties: MutableMap<String, String>? = null) : MetalLidReport(reportSuite, properties) {
 
-    private var propertiesMap = applyProperties()
-
     private var workbook = XSSFWorkbook()
 
     private var red: XSSFColor = XSSFColor(Color.RED)
@@ -96,7 +94,10 @@ class XlsxReport(private val reportSuite: ReportSuite,
 
     override fun outputResults() {
         val sheet = workbook.createSheet(reportSuite.name)
-        val bookData = mutableListOf(mutableListOf(reportSuite.name, "", "", ""), mutableListOf("TestScenario", "TestStep", "Status", "Output"))
+        val bookData = when (isDetailed()) {
+            true -> mutableListOf(mutableListOf(reportSuite.name, "", "", "", ""), mutableListOf("TestScenario", "TestStep", "Status", "Class", "Method", "Input", "Output"))
+            false -> mutableListOf(mutableListOf(reportSuite.name, "", "", ""), mutableListOf("TestScenario", "TestStep", "Status", "Output"))
+        }
 
         var beginScenarioRow = 2
         val scenarioIndexes = mutableListOf<MutableList<Int>>()
@@ -105,7 +106,10 @@ class XlsxReport(private val reportSuite: ReportSuite,
             var index = 0
             for (step: ReportStep in scenario.steps) {
                 val scenarioCell = if (index == 0) { scenario.name } else { "" }
-                val values = mutableListOf(scenarioCell, step.name, status(step.output), results(step.output))
+                val values = when (isDetailed()) {
+                    true -> mutableListOf(scenarioCell, step.name, status(step.output), step.className, step.methodName, "\"${step.value}\"", results(step.output))
+                    false -> mutableListOf(scenarioCell, step.name, status(step.output), results(step.output))
+                }
                 bookData.add(values)
                 index++
             }
@@ -125,13 +129,13 @@ class XlsxReport(private val reportSuite: ReportSuite,
             }
         }
 
-        sheet.addMergedRegion(CellRangeAddress(0,0,0,3))
+        sheet.addMergedRegion(CellRangeAddress(0,0,0,if (isDetailed()) { 6 } else { 3 }))
 
         for (rowSet: MutableList<Int> in scenarioIndexes) {
             sheet.addMergedRegion(CellRangeAddress(rowSet[0], rowSet[1], 0, 0))
         }
 
-        FileOutputStream("test-output/${propertiesMap["filename"]}.xlsx").use { outputStream -> workbook.write(outputStream) }
+        FileOutputStream("test-output/${getFilename()}.xlsx").use { outputStream -> workbook.write(outputStream) }
     }
 
     private fun getStyle(field: String): XSSFCellStyle {

@@ -8,14 +8,28 @@ abstract class MetalLidReport(private val reportSuite: ReportSuite,
 
     private var propertiesMap = HashMap<String, String>()
 
-    fun applyProperties(): MutableMap<String, String> {
+    init  {
         propertiesMap["email"] = if (!properties.isNullOrEmpty() && properties.containsKey("email")) { properties["email"]!! } else { "" }
         propertiesMap["filename"] = if (!properties.isNullOrEmpty() && properties.containsKey("filename")) { properties["filename"]!! } else { reportSuite.name.trim().replace(" ", "_") }
         propertiesMap["ftp"] = if (!properties.isNullOrEmpty() && properties.containsKey("ftp")) { properties["ftp"]!! } else { "" }
-        return propertiesMap
+        propertiesMap["detailed"] = if (!properties.isNullOrEmpty() && properties.containsKey("detailed")) { properties["detailed"]!! } else { "false" }
     }
 
-    abstract fun outputResults()
+    fun getFilename(): String {
+        return propertiesMap["filename"]!!
+    }
+
+    fun getEmail(): String {
+        return propertiesMap["email"]!!
+    }
+
+    fun getFtp(): String {
+        return propertiesMap["ftp"]!!
+    }
+
+    fun isDetailed(): Boolean {
+        return propertiesMap["detailed"] == "true"
+    }
 
     fun status(reportOutput: ReportOutput): String {
         if (reportOutput.error?.message.isNullOrEmpty()) {
@@ -24,6 +38,8 @@ abstract class MetalLidReport(private val reportSuite: ReportSuite,
 
         return "FAILURE"
     }
+
+    abstract fun outputResults()
 
     fun results(reportOutput: ReportOutput): String {
         if (reportOutput.error?.message.isNullOrEmpty()) {

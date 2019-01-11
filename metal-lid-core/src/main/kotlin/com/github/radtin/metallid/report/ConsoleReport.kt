@@ -8,7 +8,9 @@ import org.slf4j.LoggerFactory
 
 import java.lang.StringBuilder
 
-class ConsoleReport(private val reportSuite: ReportSuite) : MetalLidReport(reportSuite, null) {
+class ConsoleReport(private val reportSuite: ReportSuite,
+                    val properties: MutableMap<String, String>? = null) : MetalLidReport(reportSuite, properties) {
+
     private val log = LoggerFactory.getLogger(this::class.qualifiedName)!!
 
     override fun outputResults() {
@@ -19,6 +21,11 @@ class ConsoleReport(private val reportSuite: ReportSuite) : MetalLidReport(repor
             for (step: ReportStep in scenario.steps) {
                 report.append("  ${step.name}: \n")
                 report.append("    Status: ${status(step.output)} \n")
+                if (isDetailed()) {
+                    report.append("    Class:  ${step.className} \n")
+                    report.append("    Method: ${step.methodName} \n")
+                    report.append("    Input:  \"${step.value}\" \n")
+                }
                 report.append("    Output: ${results(step.output)} \n")
             }
         }
