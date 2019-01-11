@@ -3,15 +3,15 @@ package com.github.radtin.metallid.report
 import com.github.radtin.metallid.domain.report.ReportScenario
 import com.github.radtin.metallid.domain.report.ReportStep
 import com.github.radtin.metallid.domain.report.ReportSuite
+
 import java.io.File
 
-class HtmlReport : MetalLidReport(null, null) {
+class HtmlReport(private val reportSuite: ReportSuite,
+                 val properties: MutableMap<String, String>? = null) : MetalLidReport(reportSuite, properties) {
 
-    override fun applyProperties() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    private var propertiesMap = applyProperties()
 
-    override fun outputResults(report: ReportSuite) {
+    override fun outputResults() {
         var template = """<!DOCTYPE html>
 <html>
   <head>
@@ -60,7 +60,7 @@ ${"$"}body
 ${"$"}content"""
 
         var content = ""
-        for (scenario: ReportScenario in report.scenarios) {
+        for (scenario: ReportScenario in reportSuite.scenarios) {
             for (step: ReportStep in scenario.steps) {
                 var row = "  <tr>\n"
                 row = row.plus("    <td>${scenario.name}</td>\n")
@@ -75,10 +75,10 @@ ${"$"}content"""
 
         body = body.replace("\$content", content).plus("</table>")
 
-        template = template.replace("\$title", report.name)
+        template = template.replace("\$title", reportSuite.name)
         template = template.replace("\$body", body)
 
-        val file = File("test-output/".plus(report.name.trim().replace(" ", "_")).plus(".html"))
+        val file = File("test-output/${propertiesMap["filename"]}.html")
         file.createNewFile()
         file.writeText(template)
     }

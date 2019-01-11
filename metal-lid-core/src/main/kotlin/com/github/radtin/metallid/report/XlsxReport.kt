@@ -3,6 +3,7 @@ package com.github.radtin.metallid.report
 import com.github.radtin.metallid.domain.report.ReportScenario
 import com.github.radtin.metallid.domain.report.ReportStep
 import com.github.radtin.metallid.domain.report.ReportSuite
+
 import org.apache.poi.ss.usermodel.BorderStyle
 import org.apache.poi.ss.usermodel.CellStyle
 import org.apache.poi.ss.usermodel.FillPatternType
@@ -10,12 +11,16 @@ import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import org.apache.poi.xssf.usermodel.XSSFColor
 import org.apache.poi.xssf.usermodel.XSSFFont
-import java.io.FileOutputStream
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+
+import java.io.FileOutputStream
 import java.awt.Color
 
 
-class XlsReport : MetalLidReport(null, null) {
+class XlsxReport(private val reportSuite: ReportSuite,
+                 val properties: MutableMap<String, String>? = null) : MetalLidReport(reportSuite, properties) {
+
+    private var propertiesMap = applyProperties()
 
     private var workbook = XSSFWorkbook()
 
@@ -89,18 +94,14 @@ class XlsReport : MetalLidReport(null, null) {
         failureStyle.setFont(whiteFont)
     }
 
-    override fun applyProperties() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun outputResults(report: ReportSuite) {
-        val sheet = workbook.createSheet(report.name)
-        val bookData = mutableListOf(mutableListOf(report.name, "", "", ""), mutableListOf("TestScenario", "TestStep", "Status", "Output"))
+    override fun outputResults() {
+        val sheet = workbook.createSheet(reportSuite.name)
+        val bookData = mutableListOf(mutableListOf(reportSuite.name, "", "", ""), mutableListOf("TestScenario", "TestStep", "Status", "Output"))
 
         var beginScenarioRow = 2
         val scenarioIndexes = mutableListOf<MutableList<Int>>()
 
-        for (scenario: ReportScenario in report.scenarios) {
+        for (scenario: ReportScenario in reportSuite.scenarios) {
             var index = 0
             for (step: ReportStep in scenario.steps) {
                 val scenarioCell = if (index == 0) { scenario.name } else { "" }
@@ -130,7 +131,7 @@ class XlsReport : MetalLidReport(null, null) {
             sheet.addMergedRegion(CellRangeAddress(rowSet[0], rowSet[1], 0, 0))
         }
 
-        FileOutputStream("test-output/".plus(report.name.trim().replace(" ", "_")).plus(".xlsx")).use { outputStream -> workbook.write(outputStream) }
+        FileOutputStream("test-output/${propertiesMap["filename"]}.xlsx").use { outputStream -> workbook.write(outputStream) }
     }
 
     private fun getStyle(field: String): XSSFCellStyle {

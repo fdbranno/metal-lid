@@ -1,0 +1,9 @@
+yyyy-MM-dd hh:mm:ss
+MM/dd/yyyy
+E MM-dd-yyyy
+YYYY
+YYYY-MM
+YYYY-DD
+yyyy-MM-dd'T'hh:mm:ss
+mm/dd/yy
+EEE MMM d, ''yy hh:mm:ss

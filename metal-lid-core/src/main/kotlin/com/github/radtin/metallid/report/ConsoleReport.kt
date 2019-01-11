@@ -4,21 +4,24 @@ import com.github.radtin.metallid.domain.report.ReportScenario
 import com.github.radtin.metallid.domain.report.ReportStep
 import com.github.radtin.metallid.domain.report.ReportSuite
 
-class ConsoleReport : MetalLidReport(null, null) {
+import org.slf4j.LoggerFactory
 
-    override fun applyProperties() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+import java.lang.StringBuilder
 
-    override fun outputResults(report: ReportSuite) {
-        println(report.name)
-        for (scenario: ReportScenario in report.scenarios) {
-            println("\n    ".plus(scenario.name).plus(":"))
+class ConsoleReport(private val reportSuite: ReportSuite) : MetalLidReport(reportSuite, null) {
+    private val log = LoggerFactory.getLogger(this::class.qualifiedName)!!
+
+    override fun outputResults() {
+        val report = StringBuilder()
+        report.append("Test execution results... \n========== ${reportSuite.name} ==========")
+        for (scenario: ReportScenario in reportSuite.scenarios) {
+            report.append("\n${scenario.name}: \n")
             for (step: ReportStep in scenario.steps) {
-                println("        ".plus(step.name).plus(":"))
-                println("            status: ".plus(status(step.output)))
-                println("            output: ".plus(results(step.output)))
+                report.append("  ${step.name}: \n")
+                report.append("    Status: ${status(step.output)} \n")
+                report.append("    Output: ${results(step.output)} \n")
             }
         }
+        log.info("{}", report)
     }
 }

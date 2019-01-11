@@ -1,27 +1,35 @@
 package com.github.radtin.metallid.report
 
-import com.github.radtin.metallid.domain.Output
+import com.github.radtin.metallid.domain.report.ReportOutput
 import com.github.radtin.metallid.domain.report.ReportSuite
 
-abstract class MetalLidReport(filename: String?, properties: Map<String, String>?) {
+abstract class MetalLidReport(private val reportSuite: ReportSuite,
+                              private val properties: MutableMap<String, String>?) {
 
-    abstract fun applyProperties()
+    private var propertiesMap = HashMap<String, String>()
 
-    abstract fun outputResults(report: ReportSuite)
+    fun applyProperties(): MutableMap<String, String> {
+        propertiesMap["email"] = if (!properties.isNullOrEmpty() && properties.containsKey("email")) { properties["email"]!! } else { "" }
+        propertiesMap["filename"] = if (!properties.isNullOrEmpty() && properties.containsKey("filename")) { properties["filename"]!! } else { reportSuite.name.trim().replace(" ", "_") }
+        propertiesMap["ftp"] = if (!properties.isNullOrEmpty() && properties.containsKey("ftp")) { properties["ftp"]!! } else { "" }
+        return propertiesMap
+    }
 
-    fun status(output: Output): String {
-        if (output.error?.message.isNullOrEmpty()) {
+    abstract fun outputResults()
+
+    fun status(reportOutput: ReportOutput): String {
+        if (reportOutput.error?.message.isNullOrEmpty()) {
             return "SUCCESS"
         }
 
         return "FAILURE"
     }
 
-    fun results(output: Output): String {
-        if (output.error?.message.isNullOrEmpty()) {
-            return output.value
+    fun results(reportOutput: ReportOutput): String {
+        if (reportOutput.error?.message.isNullOrEmpty()) {
+            return reportOutput.value
         }
 
-        return output.error?.message!!
+        return reportOutput.error?.message!!
     }
 }
